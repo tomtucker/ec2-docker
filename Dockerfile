@@ -11,6 +11,7 @@ RUN yum update -y && \
 RUN cd /var/www/html
 
 # download webfiles
+# Cloned from https://github.com/azeezsalu/techmax/archive/refs/heads/main.zip without permission.
 RUN wget https://github.com/tomtucker/techmax/archive/refs/heads/main.zip
 
 # unzip folder
