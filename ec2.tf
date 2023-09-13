@@ -1,11 +1,10 @@
-# configured aws provider with proper credentials
+# Configure AWS provider using named profile from local AWS CLI configuration.
 provider "aws" {
   region  = "us-east-2"
   profile = "default"
 }
 
-
-# create default vpc if one does not exist
+# Default VPC if one does not exist
 resource "aws_default_vpc" "default_vpc" {
 
   tags = {
@@ -13,12 +12,10 @@ resource "aws_default_vpc" "default_vpc" {
   }
 }
 
-
-# use data source to get all avalablility zones in region
+# Array of all avalablility zones in region.
 data "aws_availability_zones" "available_zones" {}
 
-
-# create default subnet if one does not exist
+# Default subnet in the VPC if one does not exist
 resource "aws_default_subnet" "default_az1" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
 
@@ -27,15 +24,14 @@ resource "aws_default_subnet" "default_az1" {
   }
 }
 
-
-# create security group for the ec2 instance
+# Security group for the EC2 instance
 resource "aws_security_group" "ec2_security_group" {
-  name        = "docker server sg"
-  description = "allow access on ports 80 and 22"
+  name        = "docker host sg"
+  description = "Allow inbound access on ports 80 and 22"
   vpc_id      = aws_default_vpc.default_vpc.id
 
   ingress {
-    description = "http access"
+    description = "Allow TCP/80 (HTTP) inbound"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -43,7 +39,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 
   ingress {
-    description = "ssh access"
+    description = "Allow TCP/22 (SSH) inbound"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -51,6 +47,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 
   egress {
+    description = "Allow all outbound"
     from_port   = 0
     to_port     = 0
     protocol    = -1
@@ -58,12 +55,12 @@ resource "aws_security_group" "ec2_security_group" {
   }
 
   tags = {
-    Name = "docker server sg"
+    Name = "docker host sg"
   }
 }
 
 
-# use data source to get a registered amazon linux 2 ami
+# Get array of registered, Amazon Linux 2, AMIs.
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -79,8 +76,7 @@ data "aws_ami" "amazon_linux_2" {
   }
 }
 
-
-# launch the ec2 instance
+# Launch the EC2 instance using a pre-created EC2 Key Pair
 resource "aws_instance" "ec2_instance" {
   ami                    = data.aws_ami.amazon_linux_2.id
   instance_type          = "t2.micro"
@@ -89,12 +85,11 @@ resource "aws_instance" "ec2_instance" {
   key_name               = "ttucker-ec2key" 
 
   tags = {
-    Name = "docker server"
+    Name = "docker host"
   }
 }
 
-
-# an empty resource block
+# Empty resource block used to connect to the EC2 instance via SSH
 resource "null_resource" "name" {
 
   # ssh into the ec2 instance 
@@ -118,7 +113,12 @@ resource "null_resource" "name" {
     destination = "/home/ec2-user/Dockerfile"
   }
 
-  # copy the build_docker_image.sh from your computer to the ec2 instance 
+  # Copy shell script to EC2 that will:
+  #   Install and start Docker
+  #   Build the Docker image inside the EC2 instance
+  #   Tag and push the image to Docker Hub
+  #   Run the container using the image from Docker Hub
+  the build_docker_image.sh from your computer to the ec2 instance 
   provisioner "file" {
     source      = "build_docker_image.sh"
     destination = "/home/ec2-user/build_docker_image.sh"
