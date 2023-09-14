@@ -1,5 +1,22 @@
 # Terraform Docker Container in AWS EC2
 
+## Overview
+
+Tools:
+* Amazon EC2 key pair
+* AWS Command Line Interface (AWS CLI)
+* Docker Hub
+* Visual Studio Code
+* Git/GitHub
+* Bash
+* Terraform
+* Docker
+* Amazon Elastic Compute Cloud (Amazon EC2)
+* SSH
+* wget
+
+![Diagram](EC2-Docker.png)
+
 ## Prerequisites
 
 1. Docker Hub account with password stored securely (read-only to current local user) on your computer
