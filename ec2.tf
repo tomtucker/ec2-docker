@@ -118,7 +118,7 @@ resource "null_resource" "name" {
   #   Build the Docker image inside the EC2 instance
   #   Tag and push the image to Docker Hub
   #   Run the container using the image from Docker Hub
-  the build_docker_image.sh from your computer to the ec2 instance 
+  #   and the build_docker_image.sh from your computer to the ec2 instance 
   provisioner "file" {
     source      = "build_docker_image.sh"
     destination = "/home/ec2-user/build_docker_image.sh"
