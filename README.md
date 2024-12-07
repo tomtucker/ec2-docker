@@ -1,21 +1,24 @@
 # Terraform Docker Container in AWS EC2
 
 ## Overview
+This project demonstrates the using Infrastructre as Code (IaC) with
+Terraform/OpenToFu to create an AWS EC2 instance as a Docker host for a static web site.
 
-Tools:
+![Diagram](EC2-Docker.png)
+
+## Tech Stack
+* AWS Account
 * Amazon EC2 key pair
 * AWS Command Line Interface (AWS CLI)
 * Docker Hub
 * Visual Studio Code
 * Git/GitHub
 * Bash
-* Terraform
+* OpenTofu or HCL Terraform
 * Docker
 * Amazon Elastic Compute Cloud (Amazon EC2)
-* SSH
+* SSH client
 * wget
-
-![Diagram](EC2-Docker.png)
 
 ## Prerequisites
 
@@ -24,7 +27,7 @@ Tools:
 3. Terraform installed and initialized in Project folder
 4. AWS EC2 Key Pair created
 
-## Steps performed by Terraform
+## IaC Steps
 
 1. Create EC2 Instance.
     1. Allow HTTP & SSH access.
@@ -40,12 +43,10 @@ Tools:
 
 The pattern for this project (Docker Container in EC2 built from image in Docker Hub) is a bit dated. It is likely more prevalent to use AWS ECR and ECS or EKS.
 
-The last output from the `terraform apply` is a URL for the container:
+The last output from the `tofu apply` is a URL for the container:
 
->container_url = "http://<EC2-INSTANCE-PUBLIC-IPV4-DNS>"
+>container_url = "http://&lt;EC2-INSTANCE-PUBLIC-IPV4-DNS&gt;"
 
 Use this to browse to the website installed or connect via `ssh` with:
 
-```bash
-ssh -i ~/.ssh/my-ec2-key-pair.pem ec2-user@<EC2-INSTANCE-PUBLIC-IPV4-DNS>
-```
+>ssh -i ~/.ssh/my-ec2-key-pair.pem ec2-user@&lt;EC2-INSTANCE-PUBLIC-IPV4-DNS&gt;
